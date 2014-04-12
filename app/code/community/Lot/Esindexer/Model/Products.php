@@ -177,12 +177,13 @@ class Lot_Esindexer_Model_Products extends Mage_Core_Model_Abstract
 
         // find product count for $filter $optionId
         $collection = Mage::getResourceModel('catalog/product_collection')
-                            ->addAttributeToSelect('*')
+                            ->addAttributeToSelect($filter)
                             ->addAttributeToFilter($filter,$optionId)
-                            ->addStoreFilter()
-                            ;
+                            ->addAttributeToFilter('type_id','configurable')
+                            ->addStoreFilter();
 
         // ---
+
         $includedCategories = $includedProducts = array();
         if($collection->count()){
             foreach($collection as $v){
@@ -206,8 +207,8 @@ class Lot_Esindexer_Model_Products extends Mage_Core_Model_Abstract
                 $data = array(
                     'attr_id' => $optionId,
                     'count' => $counts,
-                    'products' => ','.implode(',', $includedProducts).',',
-                    'categories' => ','.implode(',', $includedCategories).',',
+                    'products' => ','.implode(',', array_unique($includedProducts)).',',
+                    'categories' => ','.implode(',', array_unique($includedCategories)).',',
                     'flag' => 0,
                     'store_id' => 0,
                 );
