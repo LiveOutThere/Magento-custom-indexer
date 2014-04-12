@@ -129,6 +129,8 @@ class Lot_Esindexer_Model_Products extends Mage_Core_Model_Abstract
      * @param string $filter
      * @param int $optionId
      * @param int $id
+     *
+     * TODO: extend $filter to accept an array of attribute values instead of a single value (then we could save counts into the index for "Arc`teryx Men's Jackets" and not just "Men's Jackets" or "Arc`teryx Jackets")
      */
     public function initFilteredProductsCount($filter = 'manufacturer', $optionId = 0, $id = 0){
         // if $optionId or $id is not supplied, get $optionId

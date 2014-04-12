@@ -16,16 +16,29 @@
  */
 
 // TODO: remove hardcoded paths once in production and we aren't using symlinks to deploy
-require_once '/home/liveoutt/public_html/dg-dev/shell/abstract.php';
+require_once dirname(__FILE__) . '/../abstract.php';
 
 class Mage_Shell_Lot_Esindexer extends Mage_Shell_Abstract {
 
+    private function indexForAttributeCode($attributeCode)
+    {
+        $attribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $attributeCode);
+        foreach ( $attribute->getSource()->getAllOptions(true, true) as $option) {
+            if ($option['label'] != '') {
+                $result = $this->esindexer->getFilteredProductsCount(0, $option['value'], $attributeCode);
+            }
+        }
+    }
+
     public function run()
     {
-        if (isset($this->_args['getFilteredProductsCount'])) {
-            $esindexer = Mage::getModel('esindexer/products');
-            $result = $esindexer->getFilteredProductsCount($this->_args['categoryId'], $this->_args['optionId'], $this->_args['attributeCode']);
-            var_dump($result);
+        $this->esindexer = Mage::getModel('esindexer/products');
+        if (isset($this->_args['create'])) {
+            $this->indexForAttributeCode($this->_args['attribute']);
+            echo "Successfully created count index for " . $this->_args['attribute'] . " attribute\n";
+        }
+        else if (isset($this->_args['category-id'])) {
+            echo $this->esindexer->getFilteredProductsCount($this->_args['category-id'], $this->_args['option-id'], $this->_args['attribute']) . " products\n";
         }
         else {
             echo $this->usageHelp();            
@@ -36,12 +49,14 @@ class Mage_Shell_Lot_Esindexer extends Mage_Shell_Abstract {
     {
         return <<<USAGE
 
-Usage:  php Esindexer.php -- [tool] [options]
+Usage:  php Esindexer.php --create --attribute "attribute_code"                             Create attribute_code index for the first time
+                          --category_id 4541 --option-id 3 --attribute "attribute_code"     Get a product count for a combination for a category and option_id
+
 USAGE;
     }
 }
 
-require_once '/home/liveoutt/public_html/dg-dev/app/Mage.php';
+require_once dirname(__FILE__) . '/../../app/Mage.php';
 
 Mage::app();
 
