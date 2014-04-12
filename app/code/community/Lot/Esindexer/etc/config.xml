@@ -22,7 +22,8 @@
         <models>
             <esindexer>
                 <class>Lot_Esindexer_Model</class>
-            </esindexer>
+                <resourceModel>esindexer_mysql4</resourceModel>
+              </esindexer>
             <esindexer_mysql4>
                 <class>Lot_Esindexer_Model_Mysql4</class>
                 <entities>
