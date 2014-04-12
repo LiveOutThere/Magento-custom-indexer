@@ -42,11 +42,11 @@ class Lot_Esindexer_Model_Indexer extends Mage_Index_Model_Indexer_Abstract
 
 
     public function getName(){
-        return Mage::helper('esindexer')->__('ElasticSearch index');
+        return Mage::helper('esindexer')->__('ElasticSearch');
     }
 
     public function getDescription(){
-        return Mage::helper('esindexer')->__('Refresh ElasticSearch index');
+        return Mage::helper('esindexer')->__('Index product attributes and category counts');
     }
 
     protected function _registerEvent(Mage_Index_Model_Event $event){
@@ -140,9 +140,9 @@ class Lot_Esindexer_Model_Indexer extends Mage_Index_Model_Indexer_Abstract
         $collection = Mage::getModel('esindexer/products')->getCollection()->addFieldToFilter('flag', 1);
         foreach($collection as $v){
             try{
-                Mage::getModel('esindexer/products')->initFilteredProductsCount('brand', $v->getData('attr_id'), $v->getData('esindexer_id'));
+                Mage::getModel('esindexer/products')->initFilteredProductsCount('manufacturer', $v->getData('attr_id'), $v->getData('esindexer_id'));
             } catch (Exception $e) {
-                Mage::log($e->getMessage());
+                Mage::log(__METHOD__ . ': ' . $e->getMessage());
                 return;
             }
         }

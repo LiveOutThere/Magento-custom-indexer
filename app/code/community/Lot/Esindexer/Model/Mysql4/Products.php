@@ -18,6 +18,6 @@ class Lot_Esindexer_Model_Mysql4_Products extends Mage_Core_Model_Mysql4_Abstrac
 {
     protected function _construct()
     {
-        $this->_init('esindexer/products', 'tindexer_id');
+        $this->_init('esindexer/products', 'esindexer_id');
     }
 }
