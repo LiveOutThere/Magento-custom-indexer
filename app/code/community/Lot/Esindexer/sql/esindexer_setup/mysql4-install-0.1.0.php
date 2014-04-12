@@ -24,6 +24,6 @@ CREATE TABLE {$this->getTable('esindexer')} (
    `store_id` int(11) NOT NULL DEFAULT '1',
    `flag` int(1) NOT NULL DEFAULT '0',
    `update` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY  (`tindexer_id`)
+  PRIMARY KEY  (`esindexer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ")->endSetup();
