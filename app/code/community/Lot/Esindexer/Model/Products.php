@@ -166,7 +166,7 @@ class Lot_Esindexer_Model_Products extends Mage_Core_Model_Abstract
 
         // if we find data from db and it's not an update
         // then no further processing is required
-        $isEnabled = Mage::getStoreConfig('tgeneral/general/esindexer');
+        $isEnabled = Mage::getStoreConfig('lot_esindexer/general/esindexer');
         Mage::log(__METHOD__ . ': enabled - ' . $isEnabled);
         if(!empty($products) && !$id && $isEnabled ){
             $optionId = $products[0]['attr_id'];

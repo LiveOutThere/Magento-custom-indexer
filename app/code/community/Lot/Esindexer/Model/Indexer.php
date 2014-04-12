@@ -127,10 +127,12 @@ class Lot_Esindexer_Model_Indexer extends Mage_Index_Model_Indexer_Abstract
         $ids = (array)$ids;
         $collection = Mage::getModel('esindexer/products')->getCollection();
         $filter = array();
-        foreach($ids as $id){
-            $filter[] = array('like' => "%,{$id},%");
+        if (count($ids)) {
+            foreach($ids as $id){
+                $filter[] = array('like' => "%,{$id},%");
+            }
+            $collection->addFieldToFilter($type, $filter);
         }
-        $collection->addFieldToFilter($type, $filter);
         $collection->setDataToAll('flag', 1);
         $collection->save();
     }
