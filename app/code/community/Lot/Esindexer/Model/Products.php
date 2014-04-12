@@ -131,6 +131,7 @@ class Lot_Esindexer_Model_Products extends Mage_Core_Model_Abstract
      * @param int $id
      */
     public function initFilteredProductsCount($filter = 'manufacturer', $optionId = 0, $id = 0){
+        Mage::log(__METHOD__);
         // if $optionId or $id is not supplied, get $optionId
         if (empty($optionId) && empty($id)){
             $optionId = $this->getOptionId($filter);
