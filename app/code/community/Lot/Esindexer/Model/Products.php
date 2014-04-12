@@ -1,6 +1,6 @@
 <?php
 /**
- * Technooze_Tindexer extension
+ * Lot_Esindexer extension
  *
  * NOTICE OF LICENSE
  *
@@ -9,18 +9,12 @@
  * It is also available through the world-wide-web at this URL:
  * http://opensource.org/licenses/osl-3.0.php
  *
- * @category   Technooze
- * @package    Technooze_Tindexer
- * @copyright  Copyright (c) 2008 Technooze LLC
+ * @category   Lot
+ * @package    Lot_Esindexer
+ * @author     Drew Gillson (forked from Damodar Bashyal)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
-/**
- * @category   Technooze
- * @package    Technooze_Tindexer
- * @author     Technooze <info@technooze.com>
- */
-class Technooze_Tindexer_Model_Products extends Mage_Core_Model_Abstract
+class Lot_Esindexer_Model_Products extends Mage_Core_Model_Abstract
 {
     /**
      * @var array
@@ -37,7 +31,7 @@ class Technooze_Tindexer_Model_Products extends Mage_Core_Model_Abstract
      */
     protected function _construct()
     {
-        $this->_init('tindexer/products');
+        $this->_init('esindexer/products');
     }
 
     protected function _beforeSave()
@@ -150,11 +144,11 @@ class Technooze_Tindexer_Model_Products extends Mage_Core_Model_Abstract
         }
 
         // get data collection
-        $collection = Mage::getModel('tindexer/products')->getCollection();
+        $collection = Mage::getModel('esindexer/products')->getCollection();
 
         // if $id is supplied, that means it's an update
         if($id){
-            $collection->addFieldToFilter('tindexer_id', $id);
+            $collection->addFieldToFilter('esindexer_id', $id);
         }
         // else it's a new record
         else {
@@ -172,7 +166,7 @@ class Technooze_Tindexer_Model_Products extends Mage_Core_Model_Abstract
 
         // if we find data from db and it's not an update
         // then no further processing is required
-        $isEnabled = Mage::getStoreConfig('tgeneral/general/tindexer');
+        $isEnabled = Mage::getStoreConfig('tgeneral/general/esindexer');
         Mage::log('enabled - ' . $isEnabled);
         if(!empty($products) && !$id && $isEnabled ){
             $optionId = $products[0]['attr_id'];
@@ -206,7 +200,7 @@ class Technooze_Tindexer_Model_Products extends Mage_Core_Model_Abstract
         }
 
         if(isset($this->_filteredProducts[$optionId])){
-            $model = Mage::getModel('tindexer/products')->load($id);
+            $model = Mage::getModel('esindexer/products')->load($id);
             try {
                 $counts = serialize($this->_filteredProducts);
                 $data = array(

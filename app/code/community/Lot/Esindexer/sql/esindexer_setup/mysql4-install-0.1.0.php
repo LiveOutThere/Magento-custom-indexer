@@ -1,6 +1,6 @@
 <?php
 /**
- * Technooze_Tindexer extension
+ * Lot_Esindexer extension
  *
  * NOTICE OF LICENSE
  *
@@ -9,20 +9,14 @@
  * It is also available through the world-wide-web at this URL:
  * http://opensource.org/licenses/osl-3.0.php
  *
- * @category   Technooze
- * @package    Technooze_Tindexer
- * @copyright  Copyright (c) 2008 Technooze LLC
+ * @category   Lot
+ * @package    Lot_Esindexer
+ * @author     Drew Gillson (forked from Damodar Bashyal)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
-/**
- * @category   Technooze
- * @package    Technooze_Tindexer
- * @author     Technooze <info@technooze.com>
- */
 $this->startSetup()->run("
-CREATE TABLE {$this->getTable('tindexer')} (
-   `tindexer_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE {$this->getTable('esindexer')} (
+   `esindexer_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
    `attr_id` int(10) DEFAULT NULL,
    `count` text,
    `categories` text,

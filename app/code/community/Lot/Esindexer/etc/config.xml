@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!-- 
+/**
+ * @category   Esindexer
+ * @package    Lot_Esindexer
+ * @author     Drew Gillson (forked from Damodar Bashyal)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+ -->
+<config>
+    <modules>
+        <Lot_Esindexer>
+            <version>0.1.0</version>
+        </Lot_Esindexer>
+    </modules>
+    <global>
+        <helpers>
+            <esindexer>
+                <class>Lot_Esindexer_Helper</class>
+            </esindexer>
+        </helpers>
+        <models>
+            <esindexer>
+                <class>Lot_Esindexer_Model</class>
+            </esindexer>
+            <esindexer_mysql4>
+                <class>Lot_Esindexer_Model_Mysql4</class>
+                <entities>
+                    <products>
+                        <table>esindexer</table>
+                    </products>
+                </entities>
+            </esindexer_mysql4>
+        </models>
+        <resources>
+            <esindexer_setup>
+                <setup>
+                    <module>Lot_Esindexer</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </esindexer_setup>
+            <esindexer_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </esindexer_write>
+            <esindexer_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </esindexer_read>
+        </resources>
+        <index>
+            <indexer>
+                <esindexer_indexer>
+                    <model>esindexer/indexer</model>
+                </esindexer_indexer>
+            </indexer>
+        </index>
+    </global>
+</config>

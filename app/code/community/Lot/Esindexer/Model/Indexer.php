@@ -1,6 +1,6 @@
 <?php
 /**
- * Technooze_Tindexer extension
+ * Lot_Esindexer extension
  *
  * NOTICE OF LICENSE
  *
@@ -9,23 +9,15 @@
  * It is also available through the world-wide-web at this URL:
  * http://opensource.org/licenses/osl-3.0.php
  *
- * @category   Technooze
- * @package    Technooze_Tindexer
- * @copyright  Copyright (c) 2008 Technooze LLC
+ * @category   Lot
+ * @package    Lot_Esindexer
+ * @author     Drew Gillson (forked from Damodar Bashyal)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
-/**
- *
- * @category Technooze
- * @package  Technooze_Tindexer
- * @module   Tindexer
- * @author   Damodar Bashyal (enjoygame @ hotmail.com)
- */
-class Technooze_Tindexer_Model_Indexer extends Mage_Index_Model_Indexer_Abstract
+class Lot_Esindexer_Model_Indexer extends Mage_Index_Model_Indexer_Abstract
 {
     protected $_matchedEntities = array(
-            'tindexer_entity' => array(
+            'esindexer_entity' => array(
                 Mage_Index_Model_Event::TYPE_SAVE
             )
         );
@@ -50,11 +42,11 @@ class Technooze_Tindexer_Model_Indexer extends Mage_Index_Model_Indexer_Abstract
 
 
     public function getName(){
-        return Mage::helper('tindexer')->__('Nav Product Count');
+        return Mage::helper('esindexer')->__('ElasticSearch index');
     }
 
     public function getDescription(){
-        return Mage::helper('tindexer')->__('Refresh Product count on left nav.');
+        return Mage::helper('esindexer')->__('Refresh ElasticSearch index');
     }
 
     protected function _registerEvent(Mage_Index_Model_Event $event){
@@ -72,7 +64,7 @@ class Technooze_Tindexer_Model_Indexer extends Mage_Index_Model_Indexer_Abstract
                 break;
 
             case Mage_Catalog_Model_Convert_Adapter_Product::ENTITY:
-                $event->addNewData('tindexer_indexer_reindex_all', true);
+                $event->addNewData('esindexer_indexer_reindex_all', true);
                 break;
 
             case Mage_Core_Model_Store::ENTITY:
@@ -133,7 +125,7 @@ class Technooze_Tindexer_Model_Indexer extends Mage_Index_Model_Indexer_Abstract
 
     public function flagIndexRequired($ids=array(), $type='products'){
         $ids = (array)$ids;
-        $collection = Mage::getModel('tindexer/products')->getCollection();
+        $collection = Mage::getModel('esindexer/products')->getCollection();
         $filter = array();
         foreach($ids as $id){
             $filter[] = array('like' => "%,{$id},%");
@@ -145,10 +137,10 @@ class Technooze_Tindexer_Model_Indexer extends Mage_Index_Model_Indexer_Abstract
 
     public function reindexAll(){
         // reindex all data which are flagged 1 | initFilteredProductsCount
-        $collection = Mage::getModel('tindexer/products')->getCollection()->addFieldToFilter('flag', 1);
+        $collection = Mage::getModel('esindexer/products')->getCollection()->addFieldToFilter('flag', 1);
         foreach($collection as $v){
             try{
-                Mage::getModel('tindexer/products')->initFilteredProductsCount('brand', $v->getData('attr_id'), $v->getData('tindexer_id'));
+                Mage::getModel('esindexer/products')->initFilteredProductsCount('brand', $v->getData('attr_id'), $v->getData('esindexer_id'));
             } catch (Exception $e) {
                 Mage::log($e->getMessage());
                 return;

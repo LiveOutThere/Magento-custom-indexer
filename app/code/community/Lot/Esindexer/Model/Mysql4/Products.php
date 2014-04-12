@@ -1,6 +1,6 @@
 <?php
 /**
- * Technooze_Tindexer extension
+ * Lot_Esindexer extension
  *
  * NOTICE OF LICENSE
  *
@@ -9,21 +9,15 @@
  * It is also available through the world-wide-web at this URL:
  * http://opensource.org/licenses/osl-3.0.php
  *
- * @category   Technooze
- * @package    Technooze_Tindexer
- * @copyright  Copyright (c) 2008 Technooze LLC
+ * @category   Lot
+ * @package    Lot_Esindexer
+ * @author     Drew Gillson (forked from Damodar Bashyal)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
-/**
- * @category   Technooze
- * @package    Technooze_Tindexer
- * @author     Technooze <info@technooze.com>
- */
-class Technooze_Tindexer_Model_Mysql4_Products_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
+class Lot_Esindexer_Model_Mysql4_Products extends Mage_Core_Model_Mysql4_Abstract
 {
     protected function _construct()
     {
-        $this->_init('tindexer/products');
+        $this->_init('esindexer/products', 'tindexer_id');
     }
 }
