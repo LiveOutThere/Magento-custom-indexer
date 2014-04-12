@@ -14,14 +14,18 @@
  * @author     Drew Gillson (forked from Damodar Bashyal)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-require_once dirname(__FILE__) . '/abstract.php';
+
+// TODO: remove hardcoded paths once in production and we aren't using symlinks to deploy
+require_once '/home/liveoutt/public_html/dg-dev/shell/abstract.php';
 
 class Mage_Shell_Lot_Esindexer extends Mage_Shell_Abstract {
 
     public function run()
     {
-        if (isset($this->_args['test'])) {
-            echo __METHOD__;
+        if (isset($this->_args['getFilteredProductsCount'])) {
+            $esindexer = Mage::getModel('esindexer/products');
+            $result = $esindexer->getFilteredProductsCount($this->_args['categoryId'], $this->_args['optionId'], $this->_args['attributeCode']);
+            var_dump($result);
         }
         else {
             echo $this->usageHelp();            
@@ -32,12 +36,12 @@ class Mage_Shell_Lot_Esindexer extends Mage_Shell_Abstract {
     {
         return <<<USAGE
 
-Usage:  php esindexer.php -- [tool] [options]
+Usage:  php Esindexer.php -- [tool] [options]
 USAGE;
     }
 }
 
-require_once dirname(__FILE__) . '/../../app/Mage.php';
+require_once '/home/liveoutt/public_html/dg-dev/app/Mage.php';
 
 Mage::app();
 

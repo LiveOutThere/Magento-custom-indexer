@@ -92,7 +92,7 @@ class Lot_Esindexer_Model_Products extends Mage_Core_Model_Abstract
      */
     public function getFilteredProductsCount($category_id = 0, $optionId = 0, $filter = 'manufacturer'){
 
-        // get all product count for all categories that applies to this manufacturer
+        // get all product count for all categories that applies to this $filter
         // and save it to database for quicker generation next time.
         $this->initFilteredProductsCount($filter, $optionId);
 
@@ -131,7 +131,6 @@ class Lot_Esindexer_Model_Products extends Mage_Core_Model_Abstract
      * @param int $id
      */
     public function initFilteredProductsCount($filter = 'manufacturer', $optionId = 0, $id = 0){
-        Mage::log(__METHOD__);
         // if $optionId or $id is not supplied, get $optionId
         if (empty($optionId) && empty($id)){
             $optionId = $this->getOptionId($filter);
@@ -168,7 +167,7 @@ class Lot_Esindexer_Model_Products extends Mage_Core_Model_Abstract
         // if we find data from db and it's not an update
         // then no further processing is required
         $isEnabled = Mage::getStoreConfig('lot_esindexer/general/esindexer');
-        Mage::log(__METHOD__ . ': enabled - ' . $isEnabled);
+
         if(!empty($products) && !$id && $isEnabled ){
             $optionId = $products[0]['attr_id'];
             $data = unserialize($products[0]['count']);
@@ -176,7 +175,7 @@ class Lot_Esindexer_Model_Products extends Mage_Core_Model_Abstract
             return;
         }
 
-        // find product count for manufacturer $optionId
+        // find product count for $filter $optionId
         $collection = Mage::getResourceModel('catalog/product_collection')
                             ->addAttributeToSelect('*')
                             ->addAttributeToFilter($filter,$optionId)

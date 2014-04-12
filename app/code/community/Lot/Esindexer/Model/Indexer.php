@@ -42,11 +42,11 @@ class Lot_Esindexer_Model_Indexer extends Mage_Index_Model_Indexer_Abstract
 
 
     public function getName(){
-        return Mage::helper('esindexer')->__('ElasticSearch');
+        return Mage::helper('esindexer')->__('Attribute Counts');
     }
 
     public function getDescription(){
-        return Mage::helper('esindexer')->__('Index product attributes and category counts');
+        return Mage::helper('esindexer')->__('Index product counts for category and attribute values');
     }
 
     protected function _registerEvent(Mage_Index_Model_Event $event){
@@ -88,10 +88,16 @@ class Lot_Esindexer_Model_Indexer extends Mage_Index_Model_Indexer_Abstract
         
         if ($eventType == Mage_Index_Model_Event::TYPE_SAVE || $eventType == Mage_Index_Model_Event::TYPE_MASS_ACTION) {
             $process = $event->getProcess();
+
             $this->_productIds = $event->getDataObject()->getData('product_ids');
             $this->flagIndexRequired($this->_productIds, 'products');
-
-            $process->changeStatus(Mage_Index_Model_Process::STATUS_REQUIRE_REINDEX);
+            if ($process->getMode() != 'real_time') {
+                $process->changeStatus(Mage_Index_Model_Process::STATUS_REQUIRE_REINDEX);
+            }
+            // Only reindex right away if this is not a mass-action involving multiple products
+            else if ($eventType == Mage_Index_Model_Event::TYPE_SAVE) {
+                $this->reindexAll();
+            }
         }
     }
 
@@ -112,8 +118,12 @@ class Lot_Esindexer_Model_Indexer extends Mage_Index_Model_Indexer_Abstract
             $process = $event->getProcess();
             $this->_categoryId = $event->getDataObject()->getData('entity_id');
             $this->flagIndexRequired($this->_categoryId, 'categories');
-
-            $process->changeStatus(Mage_Index_Model_Process::STATUS_REQUIRE_REINDEX);
+            if ($process->getMode() != 'real_time') {
+                $process->changeStatus(Mage_Index_Model_Process::STATUS_REQUIRE_REINDEX);
+            }
+            else {
+                $this->reindexAll();
+            }
         }
     }
     protected function _processEvent(Mage_Index_Model_Event $event){
@@ -138,11 +148,14 @@ class Lot_Esindexer_Model_Indexer extends Mage_Index_Model_Indexer_Abstract
     }
 
     public function reindexAll(){
+        $db = Mage::getSingleton('core/resource')->getConnection('core_read');
         // reindex all data which are flagged 1 | initFilteredProductsCount
         $collection = Mage::getModel('esindexer/products')->getCollection()->addFieldToFilter('flag', 1);
-        foreach($collection as $v){
+        foreach($collection as $v) {
+            // original author didn't extend the table to save the attribute_code so we need to derive it
+            $attribute_code = $db->fetchOne('SELECT b.attribute_code FROM eav_attribute_option AS a INNER JOIN eav_attribute AS b ON a.attribute_id = b.attribute_id WHERE a.option_id = ' . (int) $v->getData('attr_id') . ';');
             try{
-                Mage::getModel('esindexer/products')->initFilteredProductsCount('manufacturer', $v->getData('attr_id'), $v->getData('esindexer_id'));
+                Mage::getModel('esindexer/products')->initFilteredProductsCount($attribute_code, $v->getData('attr_id'), $v->getData('esindexer_id'));
             } catch (Exception $e) {
                 Mage::log(__METHOD__ . ': ' . $e->getMessage());
                 return;
