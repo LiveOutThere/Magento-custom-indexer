@@ -15,7 +15,6 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-// TODO: remove hardcoded paths once in production and we aren't using symlinks to deploy
 require_once dirname(__FILE__) . '/../abstract.php';
 
 class Mage_Shell_Lot_Esindexer extends Mage_Shell_Abstract {
