@@ -91,18 +91,23 @@ class Lot_Esindexer_Model_Products extends Mage_Core_Model_Abstract
      * @return int
      */
     public function getFilteredProductsCount($category_id = 0, $optionId = 0, $filter = 'manufacturer'){
+        if ($optionId == -1 && $filter == null) {
+            $this->initProductsCount();
+        }
+        else {
+            // get all product count for all categories that applies to this $filter
+            // and save it to database for quicker generation next time.
+            $this->initFilteredProductsCount($filter, $optionId);
 
-        // get all product count for all categories that applies to this $filter
-        // and save it to database for quicker generation next time.
-        $this->initFilteredProductsCount($filter, $optionId);
-
-        // get option id
-        $optionId = $this->getOptionId($filter, $optionId);
+            // get option id
+            $optionId = $this->getOptionId($filter, $optionId);
+        }
 
         // return product count for selected category
         if(isset($this->_filteredProducts[$optionId][$category_id])){
             return $this->_filteredProducts[$optionId][$category_id];
         }
+
         return 0;
     }
 
@@ -217,7 +222,75 @@ class Lot_Esindexer_Model_Products extends Mage_Core_Model_Abstract
                 $model->addData($data);
                 $model->save();
             } catch (Exception $e) {
-                Mage::log($e->getMessage());
+                Mage::log(__METHOD__ . ': ' . $e->getMessage());
+                return;
+            }
+        } else {
+        }
+        return;
+    }
+
+    public function initProductsCount($id = 0){
+        $optionId = -1;
+        $collection = Mage::getModel('esindexer/products')->getCollection();
+
+        // if $id is supplied, that means it's an update
+        if($id){
+            $collection->addFieldToFilter('esindexer_id', $id);
+        }
+        // else it's a new record
+        else {
+            $collection->addFieldToFilter('attr_id', $optionId);
+        }
+
+        $products = $collection->load();
+        $products = $products->getData();
+
+        $isEnabled = Mage::getStoreConfig('lot_esindexer/general/esindexer');
+
+        if(!empty($products) && !$id && $isEnabled ){
+            $optionId = $products[0]['attr_id'];
+            $data = unserialize($products[0]['count']);
+            $this->_filteredProducts = $data;
+            return;
+        }
+
+        $collection = Mage::getResourceModel('catalog/product_collection')
+                            ->addAttributeToFilter('type_id','configurable')
+                            ->addStoreFilter();
+
+        $includedCategories = $includedProducts = array();
+        if($collection->count()){
+            foreach($collection as $v){
+                $cats = $this->getProductCategories($v);
+                $includedProducts[] = $v->getId();
+                foreach($cats as $cat){
+                    $includedCategories[] = $cat;
+                    if(isset($this->_filteredProducts[$optionId][$cat])){
+                        $this->_filteredProducts[$optionId][$cat]++;
+                        continue;
+                    }
+                    $this->_filteredProducts[$optionId][$cat] = 1;
+                }
+            }
+        }
+
+        if(isset($this->_filteredProducts[$optionId])){
+            $model = Mage::getModel('esindexer/products')->load($id);
+            try {
+                $counts = serialize($this->_filteredProducts);
+                $data = array(
+                    'attr_id' => $optionId,
+                    'count' => $counts,
+                    'products' => ','.implode(',', array_unique($includedProducts)).',',
+                    'categories' => ','.implode(',', array_unique($includedCategories)).',',
+                    'flag' => 0,
+                    'store_id' => 0,
+                );
+                $model->addData($data);
+                $model->save();
+            } catch (Exception $e) {
+                Mage::log(__METHOD__ . ': ' . $e->getMessage());
                 return;
             }
         } else {

@@ -37,7 +37,7 @@ class Mage_Shell_Lot_Esindexer extends Mage_Shell_Abstract {
             echo "Successfully created count index for " . $this->_args['attribute'] . " attribute\n";
         }
         else if (isset($this->_args['category-id'])) {
-            echo $this->esindexer->getFilteredProductsCount($this->_args['category-id'], $this->_args['option-id'], $this->_args['attribute']) . " products\n";
+            echo $this->esindexer->getFilteredProductsCount($this->_args['category-id'], ($this->_args['option-id'] ? $this->_args['option-id'] : -1), $this->_args['attribute']) . " products\n";
         }
         else {
             echo $this->usageHelp();            

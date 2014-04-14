@@ -155,7 +155,12 @@ class Lot_Esindexer_Model_Indexer extends Mage_Index_Model_Indexer_Abstract
             // original author didn't extend the table to save the attribute_code so we need to derive it
             $attribute_code = $db->fetchOne('SELECT b.attribute_code FROM eav_attribute_option AS a INNER JOIN eav_attribute AS b ON a.attribute_id = b.attribute_id WHERE a.option_id = ' . (int) $v->getData('attr_id') . ';');
             try{
-                Mage::getModel('esindexer/products')->initFilteredProductsCount($attribute_code, $v->getData('attr_id'), $v->getData('esindexer_id'));
+                if ($attribute_code) {
+                    Mage::getModel('esindexer/products')->initFilteredProductsCount($attribute_code, $v->getData('attr_id'), $v->getData('esindexer_id'));
+                }
+                else {
+                    Mage::getModel('esindexer/products')->initProductsCount($v->getData('esindexer_id'));                    
+                }
             } catch (Exception $e) {
                 Mage::log(__METHOD__ . ': ' . $e->getMessage());
                 return;
